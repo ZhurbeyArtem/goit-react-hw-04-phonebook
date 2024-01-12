@@ -7,8 +7,18 @@ import ContactList from './contacts/ContactList';
 import s from 'index.module.css';
 
 export const App = () => {
-  const [contacts, setContacts] = useState([]);
+  const initilazeState = () => {
+    const parsedContacts = JSON.parse(localStorage.getItem('contacts'));
+    if (parsedContacts && parsedContacts.length > 0) return parsedContacts;
+    else return [];
+  };
+
+  const [contacts, setContacts] = useState(initilazeState());
   const [filter, setFilter] = useState('');
+
+  useEffect(() => {
+    localStorage.setItem('contacts', JSON.stringify(contacts));
+  }, [contacts]);
 
   const addUser = (name, phone) => {
     const isExist = contacts.filter(
@@ -36,16 +46,6 @@ export const App = () => {
       contact.name.toLowerCase().includes(filter.toLowerCase())
     );
   };
-
-  useEffect(() => {
-    const parsedContacts = JSON.parse(localStorage.getItem('contacts'));
-    if (parsedContacts && parsedContacts.length > 0)
-      setContacts(parsedContacts);
-  }, []);
-
-  useEffect(() => {
-    localStorage.setItem('contacts', JSON.stringify(contacts));
-  }, [contacts]);
 
   return (
     <div className={s.app}>
